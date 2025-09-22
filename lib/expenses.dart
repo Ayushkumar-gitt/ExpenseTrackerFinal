@@ -1,3 +1,4 @@
+import 'package:expense_tracker_2/expense_adding.dart';
 import 'package:expense_tracker_2/expense_list.dart';
 import 'package:expense_tracker_2/expense_model.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,7 @@ class _ExpensesState extends State<Expenses> {
     showModalBottomSheet(
       context: context,
       builder: (ctx) {
-        return Text("Temp  data");
+        return ExpenseAdding();
       },
     );
   }
