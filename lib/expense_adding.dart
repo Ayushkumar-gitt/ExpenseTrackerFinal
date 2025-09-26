@@ -14,10 +14,10 @@ class _ExpenseAddingState extends State<ExpenseAdding> {
   DateTime? selectedDate;
   void openDatePicker() async {
     final now = DateTime.now();
-    final FirstDate = DateTime(now.year - 1, now.month, now.day);
+    final firstDate = DateTime(now.year - 1, now.month, now.day);
     final pickedDate = await showDatePicker(
       context: context,
-      firstDate: FirstDate,
+      firstDate: firstDate,
       lastDate: now,
     );
     setState(() {
