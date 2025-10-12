@@ -12,6 +12,7 @@ class _ExpenseAddingState extends State<ExpenseAdding> {
   String title = "";
   double amount = 0;
   DateTime? selectedDate;
+  Category selectedCategory = Category.leisure;
   void openDatePicker() async {
     final now = DateTime.now();
     final firstDate = DateTime(now.year - 1, now.month, now.day);
@@ -23,6 +24,28 @@ class _ExpenseAddingState extends State<ExpenseAdding> {
     setState(() {
       selectedDate = pickedDate;
     });
+  }
+
+  void submitExpensesData() {
+    final enteredAmount = double.tryParse(amount.toString());
+    final isAmountInvalid = enteredAmount == null || enteredAmount <= 0;
+    if (isAmountInvalid || selectedDate == null || title.trim().isEmpty) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text("Invalid Input"),
+          content: Text("Please Enter data correctly"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+              },
+              child: Text("Okay"),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   @override
@@ -69,9 +92,29 @@ class _ExpenseAddingState extends State<ExpenseAdding> {
               ),
             ],
           ),
-
+          SizedBox(height: 20),
           Row(
             children: [
+              DropdownButton(
+                value: selectedCategory,
+                items: Category.values
+                    .map(
+                      (category) => DropdownMenuItem(
+                        value: category,
+                        child: Text(category.name.toString().toUpperCase()),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  if (value == null) {
+                    return;
+                  }
+                  setState(() {
+                    selectedCategory = value;
+                  });
+                },
+              ),
+              Spacer(),
               ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
@@ -81,7 +124,7 @@ class _ExpenseAddingState extends State<ExpenseAdding> {
               SizedBox(width: 16),
               ElevatedButton(
                 onPressed: () {
-                  print(title);
+                  submitExpensesData();
                 },
                 child: Text("Save Expenses"),
               ),
