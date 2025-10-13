@@ -27,11 +27,18 @@ class _ExpensesState extends State<Expenses> {
   ];
   void openModelSheet() {
     showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
       builder: (ctx) {
-        return ExpenseAdding();
+        return ExpenseAdding(onAddExpense: addExpense,);
       },
     );
+  }
+
+  void addExpense(ExpenseModel expense) {
+    setState(() {
+      registeredExpenses.add(expense);
+    });
   }
 
   @override

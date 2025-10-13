@@ -2,15 +2,15 @@ import 'package:expense_tracker_2/expense_model.dart';
 import 'package:flutter/material.dart';
 
 class ExpenseAdding extends StatefulWidget {
-  const ExpenseAdding({super.key});
-
+  const ExpenseAdding({required this.onAddExpense, super.key});
+  final void Function(ExpenseModel expense) onAddExpense;
   @override
   State<ExpenseAdding> createState() => _ExpenseAddingState();
 }
 
 class _ExpenseAddingState extends State<ExpenseAdding> {
-  String title = "";
-  double amount = 0;
+  var title = TextEditingController();
+  var amount = TextEditingController();
   DateTime? selectedDate;
   Category selectedCategory = Category.leisure;
   void openDatePicker() async {
@@ -27,9 +27,9 @@ class _ExpenseAddingState extends State<ExpenseAdding> {
   }
 
   void submitExpensesData() {
-    final enteredAmount = double.tryParse(amount.toString());
+    final enteredAmount = double.tryParse(amount.text);
     final isAmountInvalid = enteredAmount == null || enteredAmount <= 0;
-    if (isAmountInvalid || selectedDate == null || title.trim().isEmpty) {
+    if (isAmountInvalid || selectedDate == null || title.text == null) {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -46,6 +46,14 @@ class _ExpenseAddingState extends State<ExpenseAdding> {
         ),
       );
     }
+    widget.onAddExpense(
+      ExpenseModel(
+        title: title.text,
+        amount: enteredAmount!,
+        date: selectedDate!,
+        category: selectedCategory,
+      ),
+    );
   }
 
   @override
@@ -56,18 +64,14 @@ class _ExpenseAddingState extends State<ExpenseAdding> {
         children: [
           TextField(
             maxLength: 50,
-            onChanged: (value) {
-              title = value;
-            },
+            controller: title,
             decoration: InputDecoration(label: Text("Enter Title")),
           ),
           Row(
             children: [
               Expanded(
                 child: TextField(
-                  onChanged: (value) {
-                    amount = value as double;
-                  },
+                  controller: amount,
                   keyboardType: TextInputType.numberWithOptions(),
                   decoration: InputDecoration(
                     label: Text("Amount"),
@@ -125,6 +129,7 @@ class _ExpenseAddingState extends State<ExpenseAdding> {
               ElevatedButton(
                 onPressed: () {
                   submitExpensesData();
+                  Navigator.pop(context);
                 },
                 child: Text("Save Expenses"),
               ),
