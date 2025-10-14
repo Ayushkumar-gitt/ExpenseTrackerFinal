@@ -30,7 +30,7 @@ class _ExpensesState extends State<Expenses> {
       isScrollControlled: true,
       context: context,
       builder: (ctx) {
-        return ExpenseAdding(onAddExpense: addExpense,);
+        return ExpenseAdding(onAddExpense: addExpense);
       },
     );
   }
@@ -38,6 +38,12 @@ class _ExpensesState extends State<Expenses> {
   void addExpense(ExpenseModel expense) {
     setState(() {
       registeredExpenses.add(expense);
+    });
+  }
+
+  void removeExpense(ExpenseModel expense) {
+    setState(() {
+      registeredExpenses.remove(expense);
     });
   }
 
@@ -49,7 +55,7 @@ class _ExpensesState extends State<Expenses> {
         actions: [IconButton(onPressed: openModelSheet, icon: Icon(Icons.add))],
       ),
       body: Column(
-        children: [Expanded(child: ExpenseList(expenses: registeredExpenses))],
+        children: [Expanded(child: ExpenseList(expenses: registeredExpenses,onRemoveExpense: removeExpense,))],
       ),
     );
   }
