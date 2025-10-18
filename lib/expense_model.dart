@@ -10,7 +10,7 @@ enum Category { travel, leisure, food, work }
 final categoryIcons = {
   Category.food: Icons.lunch_dining,
   Category.leisure: Icons.movie,
-  Category.travel: Icons.travel_explore,
+  Category.travel: Icons.flight,
   Category.work: Icons.work,
 };
 

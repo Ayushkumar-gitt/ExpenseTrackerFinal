@@ -1,3 +1,4 @@
+import 'package:expense_tracker_2/chart.dart';
 import 'package:expense_tracker_2/expense_adding.dart';
 import 'package:expense_tracker_2/expense_list.dart';
 import 'package:expense_tracker_2/expense_model.dart';
@@ -42,21 +43,73 @@ class _ExpensesState extends State<Expenses> {
   }
 
   void removeExpense(ExpenseModel expense) {
+    int index = registeredExpenses.indexOf(expense);
     setState(() {
       registeredExpenses.remove(expense);
     });
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Expense Deleted"),
+        duration: Duration(seconds: 3),
+        action: SnackBarAction(
+          label: "Undo",
+          onPressed: () {
+            setState(() {
+              registeredExpenses.insert(index, expense);
+            });
+          },
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    Widget maincontent = Center(
+      child: Text(
+        "No Expense Found , Please enter some",
+        style: TextStyle(fontWeight: FontWeight.w500),
+      ),
+    );
+
+    if (registeredExpenses.isNotEmpty) {
+      maincontent = ExpenseList(
+        expenses: registeredExpenses,
+        onRemoveExpense: removeExpense,
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text("Expense Tracker"),
         actions: [IconButton(onPressed: openModelSheet, icon: Icon(Icons.add))],
       ),
       body: Column(
-        children: [Expanded(child: ExpenseList(expenses: registeredExpenses,onRemoveExpense: removeExpense,))],
+        children: [
+          Chart(expenses: registeredExpenses),
+          Expanded(child: maincontent),
+        ],
       ),
     );
+  }
+}
+
+class ExpenseBucket {
+  ExpenseBucket({required this.category, required this.expenses});
+  final Category category;
+  final List<ExpenseModel> expenses;
+
+  ExpenseBucket.forCategory(List<ExpenseModel> allexpense, this.category)
+    : expenses = allexpense
+          .where((expense) => expense.category == category)
+          .toList();
+
+  double get totalExpenses {
+    double sum = 0;
+    for (final expense in expenses) {
+      sum += expense.amount;
+    }
+
+    return sum;
   }
 }
