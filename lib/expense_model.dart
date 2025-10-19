@@ -14,6 +14,7 @@ final categoryIcons = {
   Category.work: Icons.work,
 };
 
+
 class ExpenseModel {
   ExpenseModel({
     required this.title,
